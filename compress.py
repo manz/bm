@@ -8,7 +8,7 @@ from a816.writers import IPSWriter
 from utils.assets import CompressedAssets
 from utils.compress import compress_blocks
 
-def file_compress():
+def file_compress() -> None:
     graphics_path = Path("graphics")
     assets_path = Path("build")
 
@@ -19,7 +19,7 @@ def file_compress():
         (assets_path / name[0]).write_bytes(compressed)
 
 
-def ips_generator():
+def ips_generator() -> None:
     graphics_path = Path("graphics")
     graphics_patch = Path("bm.ips").open("wb")
     ips_writer = IPSWriter(graphics_patch)
@@ -35,7 +35,9 @@ def ips_generator():
         data = graphics_file.read_bytes()
         compressed = compress_blocks(data)
         compressed_assets.write_address(ips_writer, asset_id, relocated_base)
-        ips_writer.write_block(compressed, relocated_base.physical)
+        relocated_base_physical = relocated_base.physical
+        assert relocated_base_physical is not None
+        ips_writer.write_block(compressed, relocated_base_physical)
         relocated_base += len(compressed)
     ips_writer.end()
 

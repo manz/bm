@@ -21,8 +21,9 @@ if __name__ == "__main__":
             block_addr = compressed_assets.get_address(rom, asset_id)
             decompressed_path = decompressed_dir / f"{asset_id:02x}.bin"
             compressed_path = compressed_dir / "{asset_id:02x}.bin"
-
-            rom.seek(block_addr.physical)
+            addr = block_addr.physical
+            assert addr is not None
+            rom.seek(addr)
             data = rom.read(block_count * 0x25)
 
             decompressed, compressed_size = decompress_blocks(data, block_count)

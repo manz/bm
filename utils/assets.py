@@ -1,40 +1,57 @@
 import struct
+from typing import BinaryIO
 
 from a816.cpu.mapping import Address
 from a816.symbols import low_rom_bus
-from a816.writers import IPSWriter
+from a816.writers import Writer
 
 
 class CompressedAssets:
-    def __init__(self):
+    def __init__(self) -> None:
         self.block_size_table = low_rom_bus.get_address(0x8e8178)
         self.b1_addr = low_rom_bus.get_address(0x8e82f0)
         self.b2_addr = low_rom_bus.get_address(0x8e83ac)
         self.b3_addr = low_rom_bus.get_address(0x8e8468)
 
-    def get_block_count(self, rom, asset_id: int) -> int:
-        rom.seek((self.block_size_table + asset_id).physical)
+    def get_block_count(self, rom: BinaryIO, asset_id: int) -> int:
+        addr = (self.block_size_table + asset_id).physical
+        assert addr is not None
+        rom.seek(addr)
         block_count = rom.read(1)
         return ord(block_count)
 
-    def get_address(self, rom, asset_id: int) -> Address:
-        rom.seek((self.b1_addr + asset_id).physical)
+    def get_address(self, rom: BinaryIO, asset_id: int) -> Address:
+        addr = (self.b1_addr + asset_id).physical
+        assert addr is not None
+        rom.seek(addr)
         b1 = ord(rom.read(1))
-        rom.seek((self.b2_addr + asset_id).physical)
+
+        addr = (self.b2_addr + asset_id).physical
+        assert addr is not None
+        rom.seek(addr)
         b2 = ord(rom.read(1))
-        rom.seek((self.b3_addr + asset_id).physical)
+
+        addr = (self.b3_addr + asset_id).physical
+        assert addr is not None
+        rom.seek(addr)
         b3 = ord(rom.read(1))
         addr = b1 | b2 << 8 | b3 << 16
         return low_rom_bus.get_address(addr)
 
-
-    def write_address(self, ips_writer: IPSWriter, asset_id: int, relocated_address: Address) -> None:
+    def write_address(self, writer: Writer, asset_id: int, relocated_address: Address) -> None:
         addr = relocated_address.logical_value
-        print(hex(addr))
         b1 = addr & 0xff
         b2 = addr >> 8 & 0xff
         b3 = addr >> 16 & 0xff
 
-        ips_writer.write_block(struct.pack("B", b1), (self.b1_addr + asset_id).physical)
-        ips_writer.write_block(struct.pack("B", b2), (self.b2_addr + asset_id).physical)
-        ips_writer.write_block(struct.pack("B", b3), (self.b3_addr + asset_id).physical)
+        addr_1 = (self.b1_addr + asset_id).physical
+        assert addr_1 is not None
+        writer.write_block(struct.pack("B", b1), addr_1)
+
+        addr_2 = (self.b2_addr + asset_id).physical
+        assert addr_2 is not None
+        writer.write_block(struct.pack("B", b2), addr_2)
+
+        addr_3 = (self.b3_addr + asset_id).physical
+        assert addr_3 is not None
+        writer.write_block(struct.pack("B", b3), addr_3)

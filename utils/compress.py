@@ -1,6 +1,4 @@
-from pathlib import Path
 
-from a816.symbols import low_rom_bus
 
 from utils import xba
 
@@ -16,7 +14,7 @@ def compress_blocks(data: bytes) -> bytes:
     return compressed
 
 
-def compress_block(data: bytes):
+def compress_block(data: bytes) -> bytes:
     compressed = bytearray()
 
     seed = [0x00, 0x00]
@@ -45,7 +43,7 @@ def compress_block(data: bytes):
     return compressed
 
 
-def _compress(data, k, seed):
+def _compress(data: bytes, k: int, seed: list[int]) -> tuple[int, bytes]:
     control_byte = 0x00
     chunk = bytearray()
     for i in range(0, 8):
@@ -59,5 +57,3 @@ def _compress(data, k, seed):
         xba(seed)
 
     return control_byte, chunk
-
-
