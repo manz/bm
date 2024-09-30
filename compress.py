@@ -2,17 +2,11 @@
 
 from pathlib import Path
 
-from a816.cpu.mapping import Bus
+from a816.symbols import low_rom_bus
 from a816.writers import IPSWriter
 
 from utils.assets import CompressedAssets
 from utils.compress import compress_blocks
-
-low_rom_bus = Bus("low_rom_default_mapping")
-
-low_rom_bus.map("1", (0x00, 0x6F), (0x8000, 0xFFFF), mask=0x8000, mirror_bank_range=(0x80, 0xCF))
-low_rom_bus.map("2", (0x7E, 0x7F), (0, 0xFFFF), mask=0x1_0000, writeable=True)
-
 
 def file_compress():
     graphics_path = Path("graphics")
