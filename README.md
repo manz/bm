@@ -8,7 +8,10 @@ source .venv/bin/activate
 pip install -r requirements.txt 
 ```
 
-## decompress
+## Decompress assets
+
+> Note: The decompressor outputs 0-sized files 60 for example, it needs further investigation to understand why.
+
 Add the rom at in the root directory named `bl.sfc` without copier header.
 
 ```shell 
