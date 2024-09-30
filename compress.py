@@ -8,6 +8,7 @@ from a816.writers import IPSWriter
 from utils.assets import CompressedAssets
 from utils.compress import compress_blocks
 
+
 def file_compress() -> None:
     graphics_path = Path("graphics")
     assets_path = Path("build")

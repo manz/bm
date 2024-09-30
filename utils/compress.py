@@ -1,5 +1,3 @@
-
-
 from utils import xba
 
 
@@ -8,7 +6,7 @@ def compress_blocks(data: bytes) -> bytes:
     block_count = len(data) // 32
 
     for current_block in range(block_count):
-        block_data = data[current_block * 32: (current_block + 1) * 32]
+        block_data = data[current_block * 32 : (current_block + 1) * 32]
         compressed_block = compress_block(block_data)
         compressed += compressed_block
     return compressed

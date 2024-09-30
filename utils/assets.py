@@ -8,10 +8,10 @@ from a816.writers import Writer
 
 class CompressedAssets:
     def __init__(self) -> None:
-        self.block_size_table = low_rom_bus.get_address(0x8e8178)
-        self.b1_addr = low_rom_bus.get_address(0x8e82f0)
-        self.b2_addr = low_rom_bus.get_address(0x8e83ac)
-        self.b3_addr = low_rom_bus.get_address(0x8e8468)
+        self.block_size_table = low_rom_bus.get_address(0x8E8178)
+        self.b1_addr = low_rom_bus.get_address(0x8E82F0)
+        self.b2_addr = low_rom_bus.get_address(0x8E83AC)
+        self.b3_addr = low_rom_bus.get_address(0x8E8468)
 
     def get_block_count(self, rom: BinaryIO, asset_id: int) -> int:
         addr = (self.block_size_table + asset_id).physical
@@ -40,9 +40,9 @@ class CompressedAssets:
 
     def write_address(self, writer: Writer, asset_id: int, relocated_address: Address) -> None:
         addr = relocated_address.logical_value
-        b1 = addr & 0xff
-        b2 = addr >> 8 & 0xff
-        b3 = addr >> 16 & 0xff
+        b1 = addr & 0xFF
+        b2 = addr >> 8 & 0xFF
+        b3 = addr >> 16 & 0xFF
 
         addr_1 = (self.b1_addr + asset_id).physical
         assert addr_1 is not None

@@ -20,6 +20,6 @@ def decompress_blocks(data: bytes, block_count: int) -> tuple[bytearray, int]:
 
             decompressed.append(accumulator[0])
             xba(accumulator)
-            control_byte = (control_byte << 1) & 0xff
+            control_byte = (control_byte << 1) & 0xFF
 
     return decompressed, y
