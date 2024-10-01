@@ -29,10 +29,10 @@ def ips_generator() -> None:
 
     ips_writer.begin()
     compressed_assets = CompressedAssets()
-
-    for _, _, name in graphics_path.walk():
-        graphics_file = graphics_path / name[0]
-        asset_id = int(name[0].split(".")[0], 16)
+    for graphics_file in list(graphics_path.glob('*.bin')):
+        stem = graphics_file.stem
+        print(f"compressing {stem}")
+        asset_id = int(stem, 16)
         data = graphics_file.read_bytes()
         compressed = compress_blocks(data)
         compressed_assets.write_address(ips_writer, asset_id, relocated_base)
