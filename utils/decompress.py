@@ -23,3 +23,34 @@ def decompress_blocks(data: bytes, block_count: int) -> tuple[bytearray, int]:
             control_byte = (control_byte << 1) & 0xFF
 
     return decompressed, y
+
+
+def decompress_tile_map(data: bytes, block_count: int) -> tuple[bytearray, int]:
+    decompressed = bytearray()
+
+    y = 0
+    current_b1 = 0
+    current_b2 = 0
+
+    for _ in range(0, block_count):
+        for _ in range(8):
+            control_byte = data[y]
+            y += 1
+            for _ in range(4):
+                if control_byte & 0x80:
+                    current_b1 = data[y]
+                    y += 1
+
+                control_byte = (control_byte << 1 ) & 0xFF
+
+                if control_byte & 0x80:
+                    current_b2 = data[y]
+                    y +=1
+
+                control_byte = (control_byte << 1 ) & 0xFF
+
+
+                decompressed.append(current_b1)
+                decompressed.append(current_b2)
+
+    return decompressed, y

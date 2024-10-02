@@ -6,7 +6,7 @@ def compress_blocks(data: bytes) -> bytes:
     block_count = len(data) // 32
 
     for current_block in range(block_count):
-        block_data = data[current_block * 32 : (current_block + 1) * 32]
+        block_data = data[current_block * 32: (current_block + 1) * 32]
         compressed_block = compress_block(block_data)
         compressed += compressed_block
     return compressed
@@ -55,3 +55,38 @@ def _compress(data: bytes, k: int, seed: list[int]) -> tuple[int, bytes]:
         xba(seed)
 
     return control_byte, chunk
+
+
+def compress_tile_map(data: bytes) -> bytearray:
+    compressed = bytearray()
+
+    k = 0
+
+    current_b1 = 0
+    current_b2 = 0
+
+    while k < len(data):
+        chunk = bytearray()
+        control_byte = 0
+        i = 0
+        for _ in range(0, 4):
+            b1 = data[k]
+            if b1 != current_b1:
+                control_byte |= 1 << (7 - i)
+                chunk.append(b1)
+                current_b1 = b1
+            k += 1
+            i += 1
+
+            b2 = data[k]
+            if b2 != current_b2:
+                control_byte |= 1 << (7 - i)
+                chunk.append(b2)
+                current_b2 = b2
+            k += 1
+            i += 1
+
+        compressed.append(control_byte)
+        compressed += chunk
+
+    return compressed
