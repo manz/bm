@@ -12,6 +12,7 @@ class CompressedAssets:
         self.b1_addr = low_rom_bus.get_address(0x8E82F0)
         self.b2_addr = low_rom_bus.get_address(0x8E83AC)
         self.b3_addr = low_rom_bus.get_address(0x8E8468)
+        self.assets_flags = low_rom_bus.get_address(0x8E8000)
 
     def get_block_count(self, rom: BinaryIO, asset_id: int) -> int:
         addr = (self.block_size_table + asset_id).physical
@@ -19,6 +20,14 @@ class CompressedAssets:
         rom.seek(addr)
         block_count = rom.read(1)
         return ord(block_count)
+
+    def get_compression_type(self, rom: BinaryIO, asset_id: int) -> int:
+        addr = (self.assets_flags + asset_id).physical
+        assert addr is not None
+        rom.seek(addr)
+        flags = rom.read(1)
+
+        return ord(flags) & 0x0f
 
     def get_address(self, rom: BinaryIO, asset_id: int) -> Address:
         addr = (self.b1_addr + asset_id).physical
